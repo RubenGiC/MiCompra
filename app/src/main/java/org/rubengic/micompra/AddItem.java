@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +21,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +43,19 @@ public class AddItem extends AppCompatActivity {
     private final int PHOTO_CODE = 100;
     private final int SELECT_PICTURE = 200;
 
+    //for image
     private ImageView img_v;
     private Bitmap imageBitmap;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    //for information
+    private EditText ed_name;
+    private EditText ed_price;
+    private Spinner sp_market;
+
+    //name db
+    private String DB_NAME = "mimarket";
 
     //take the picture
     private void dispatchTakePictureIntent() {
@@ -100,6 +112,10 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        ed_name = (EditText) findViewById(R.id.t_name_item);
+        ed_price = (EditText) findViewById(R.id.t_price);
+        sp_market = (Spinner) findViewById(R.id.sp_market);
+
         //charge the imagen view and button
         img_v = (ImageView) findViewById(R.id.i_image);
         Button b = (Button) findViewById(R.id.b_add_image);
@@ -148,7 +164,12 @@ public class AddItem extends AppCompatActivity {
                 SQLiteDatabase db_write = db.getWritableDatabase();
 
                 if(db_write != null){
+                    ContentValues cv = new ContentValues();
+                    cv.put("name", ed_name.getText().toString());
+                    cv.put("price", ed_price.getText().toString());
+                    cv.put("market", sp_market.getSelectedItem().toString());
 
+                    db_write.insert(DB_NAME,null, cv);
                 }
             }
         });
