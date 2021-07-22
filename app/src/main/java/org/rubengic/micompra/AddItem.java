@@ -1,19 +1,11 @@
 package org.rubengic.micompra;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
+import androidx.appcompat.widget.Toolbar;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +49,8 @@ public class AddItem extends AppCompatActivity {
 
     //name db
     private String DB_NAME = "mimarket";
+
+    private Toolbar my_toolbar;
 
     //take the picture
     private void dispatchTakePictureIntent() {
@@ -112,6 +107,11 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        //change toolbar by my personalizate
+        my_toolbar = findViewById(R.id.custom_toolbar_add_item);
+        setSupportActionBar(my_toolbar);
+        //getSupportActionBar().setTitle("Añadir Producto");
+
         ed_name = (EditText) findViewById(R.id.t_name_item);
         ed_price = (EditText) findViewById(R.id.t_price);
         sp_market = (Spinner) findViewById(R.id.sp_market);
@@ -157,20 +157,35 @@ public class AddItem extends AppCompatActivity {
             }
         });
 
+        //add in data base the item
         b_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //access and permission to write data base
                 DataBase db = new DataBase(AddItem.this);
                 SQLiteDatabase db_write = db.getWritableDatabase();
 
                 if(db_write != null){
+                    //add values
                     ContentValues cv = new ContentValues();
                     cv.put("name", ed_name.getText().toString());
                     cv.put("price", ed_price.getText().toString());
                     cv.put("market", sp_market.getSelectedItem().toString());
 
+                    //insert in database
                     db_write.insert(DB_NAME,null, cv);
+                    //show to add
+                    Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
+                    //and back to main layout
+                    AddItem.super.onBackPressed();
                 }
+            }
+        });
+
+        my_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddItem.super.onBackPressed();
             }
         });
     }

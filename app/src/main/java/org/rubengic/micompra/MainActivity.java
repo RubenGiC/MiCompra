@@ -19,6 +19,7 @@ import org.rubengic.micompra.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Añadiendo nuevo producto", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Añadiendo nuevo producto", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
                 //add action add new item
                 Intent i= new Intent(getApplicationContext(), AddItem.class);
                 startActivity(i);
