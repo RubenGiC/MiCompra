@@ -15,6 +15,9 @@ public class DataBase extends SQLiteOpenHelper {
     //number of version
     private static final int VERSION = 1;
 
+    //name db
+    public String DB_NAME_PUBLIC = "mimarket";
+
     public DataBase(Context context) {
         super(context, BD_NAME, null, VERSION);
     }

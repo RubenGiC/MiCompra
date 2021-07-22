@@ -2,6 +2,8 @@ package org.rubengic.micompra;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -46,9 +48,6 @@ public class AddItem extends AppCompatActivity {
     private EditText ed_name;
     private EditText ed_price;
     private Spinner sp_market;
-
-    //name db
-    private String DB_NAME = "mimarket";
 
     private Toolbar my_toolbar;
 
@@ -173,7 +172,7 @@ public class AddItem extends AppCompatActivity {
                     cv.put("market", sp_market.getSelectedItem().toString());
 
                     //insert in database
-                    db_write.insert(DB_NAME,null, cv);
+                    db_write.insert(db.DB_NAME_PUBLIC,null, cv);
                     //show to add
                     Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
                     //and back to main layout

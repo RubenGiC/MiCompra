@@ -7,42 +7,46 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
 
-    private String[] localDataSet;
+    //private String[] localDataSet;
+    private ArrayList<Items> listItems;
 
-    public ListaItems(String[] dataSet){
-        localDataSet = dataSet;
+    public ListaItems(ArrayList<Items> listItems){//String[] dataSet
+        this.listItems = listItems;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View vi = LayoutInflater.from(parent.getContext()).inflate(R.layout.text_row_item, parent, false);
-        return null;
+        View vi = LayoutInflater.from(parent.getContext()).inflate(R.layout.text_row_item, null, false);
+        //return null;
+        return new ViewHolder(vi);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.getTextView().setText(localDataSet[position]);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.name.setText(listItems.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return localDataSet.length;
+        return listItems.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView textView;
+        TextView name, price, market;
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
 
-            textView = (TextView) view.findViewById(R.id.t_name);
+            name = (TextView) view.findViewById(R.id.t_name);
         }
 
-        public TextView getTextView() {
-            return textView;
+        public TextView getName() {
+            return name;
         }
     }
 

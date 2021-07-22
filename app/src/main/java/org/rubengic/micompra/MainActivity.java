@@ -1,6 +1,8 @@
 package org.rubengic.micompra;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,12 +16,16 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.rubengic.micompra.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toolbar;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,12 +34,31 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab_add;
 
+    private ArrayList<Items> listItems;
+    private RecyclerView rv_listItems;
+
+    DataBase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        db = new DataBase(getApplicationContext());
+        listItems = new ArrayList<>();
+        rv_listItems = (RecyclerView) findViewById(R.id.rv_list_items);
+
+        rv_listItems.setLayoutManager(new LinearLayoutManager(this));
+
+        //go to access to the database
+        SelectListItems();
+
+        //create the adapter
+        ListaItems adapter = new ListaItems(listItems);
+        //and add the adapter to the recycler view
+        rv_listItems.setAdapter(adapter);
 
         setSupportActionBar(binding.toolbar);
 
@@ -52,6 +77,25 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    //method that queries the data from the database
+    private void SelectListItems(){
+        SQLiteDatabase db_read = db.getReadableDatabase();
+
+        Items item = null;
+
+        Cursor cursor = db_read.rawQuery("SELECT * FROM "+db.DB_NAME_PUBLIC, null);
+
+        //go to all data of the table
+        while(cursor.moveToNext()){
+            item = new Items();
+            item.setName(cursor.getString(1));
+            item.setPrice(cursor.getDouble(2));
+            item.setMarket(cursor.getString(3));
+
+            listItems.add(item);
+        }
     }
 
     @Override

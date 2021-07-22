@@ -8,8 +8,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.rubengic.micompra.databinding.FragmentFirstBinding;
+
+import java.util.ArrayList;
 
 public class FirstFragment extends Fragment {
 
