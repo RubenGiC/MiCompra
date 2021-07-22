@@ -11,6 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="spn_title">Elige la tienda</string>
+    <string name="element_text">texto</string>
 
     <string-array name="dMarket">
         <item>Coviran</item>
