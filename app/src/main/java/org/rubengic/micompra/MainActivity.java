@@ -46,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //create database, the list of items and the recycler view
         db = new DataBase(getApplicationContext());
         listItems = new ArrayList<>();
         rv_listItems = (RecyclerView) findViewById(R.id.rv_list_items);
 
+        //manage layout
         rv_listItems.setLayoutManager(new LinearLayoutManager(this));
 
         //go to access to the database
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     //method that queries the data from the database
     private void SelectListItems(){
+        //indicate using only read data
         SQLiteDatabase db_read = db.getReadableDatabase();
 
         Items item = null;
@@ -89,11 +92,10 @@ public class MainActivity extends AppCompatActivity {
 
         //go to all data of the table
         while(cursor.moveToNext()){
-            item = new Items();
-            item.setName(cursor.getString(1));
-            item.setPrice(cursor.getDouble(2));
-            item.setMarket(cursor.getString(3));
+            //create item
+            item = new Items(cursor.getInt(0), cursor.getString(1), cursor.getDouble(2), cursor.getString(3));
 
+            //and add to the list
             listItems.add(item);
         }
     }

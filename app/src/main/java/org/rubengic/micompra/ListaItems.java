@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * This class used from show the items with recycler view
+ */
 public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
 
-    //private String[] localDataSet;
     private ArrayList<Items> listItems;
 
     public ListaItems(ArrayList<Items> listItems){//String[] dataSet
@@ -19,13 +21,18 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
     }
 
     @Override
+    /**
+     * its used for the structure of each item
+     */
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View vi = LayoutInflater.from(parent.getContext()).inflate(R.layout.text_row_item, null, false);
-        //return null;
         return new ViewHolder(vi);
     }
 
     @Override
+    /**
+     * add data to display
+     */
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.name.setText(listItems.get(position).getName());
     }
@@ -41,7 +48,7 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
-
+            // Define the texts Views
             name = (TextView) view.findViewById(R.id.t_name);
         }
 
