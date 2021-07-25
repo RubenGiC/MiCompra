@@ -68,8 +68,10 @@
             android:id="@+id/sp_market"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/dMarket"
-            android:padding="15dp" />
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"/>
+        <!-- android:entries="@array/dMarket" -->
 
         <LinearLayout
             android:layout_width="match_parent"

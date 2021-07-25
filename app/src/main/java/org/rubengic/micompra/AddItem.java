@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class AddItem extends AppCompatActivity {
@@ -50,6 +53,8 @@ public class AddItem extends AppCompatActivity {
     private Spinner sp_market;
 
     private Toolbar my_toolbar;
+
+    DataBase db;
 
     //take the picture
     private void dispatchTakePictureIntent() {
@@ -106,6 +111,9 @@ public class AddItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+        //create database
+        db = new DataBase(getApplicationContext());
+
         //change toolbar by my personalizate
         my_toolbar = findViewById(R.id.custom_toolbar_add_item);
         setSupportActionBar(my_toolbar);
@@ -114,6 +122,23 @@ public class AddItem extends AppCompatActivity {
         ed_name = (EditText) findViewById(R.id.t_name_item);
         ed_price = (EditText) findViewById(R.id.t_price);
         sp_market = (Spinner) findViewById(R.id.sp_market);
+
+        ArrayList <String> list_markets = new ArrayList<>();
+
+        //indicate using only read data
+        SQLiteDatabase db_read = db.getReadableDatabase();
+
+        Cursor cursor = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC, null);
+
+        //go to all data of the table
+        while(cursor.moveToNext()){
+            list_markets.add(cursor.getString(1));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list_markets);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_market.setAdapter(adapter);
 
         //charge the imagen view and button
         img_v = (ImageView) findViewById(R.id.i_image);
@@ -163,20 +188,32 @@ public class AddItem extends AppCompatActivity {
                 //access and permission to write data base
                 DataBase db = new DataBase(AddItem.this);
                 SQLiteDatabase db_write = db.getWritableDatabase();
+                SQLiteDatabase db_read = db.getWritableDatabase();
 
-                if(db_write != null){
+                Cursor exist = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+ed_name.getText().toString()+"')", null);
+
+                if(db_write != null && exist.getCount() == 0){
                     //add values
-                    ContentValues cv = new ContentValues();
-                    cv.put("name", ed_name.getText().toString());
-                    cv.put("price", ed_price.getText().toString());
-                    cv.put("market", sp_market.getSelectedItem().toString());
+                    ContentValues cv_item = new ContentValues();
+                    ContentValues cv_price = new ContentValues();
+                    cv_item.put("name", ed_name.getText().toString());
+                    cv_price.put("price", ed_price.getText().toString());
 
                     //insert in database
-                    db_write.insert(db.DB_NAME_PUBLIC,null, cv);
+                    long id_item = db_write.insert(db.DB_ITEMS_PUBLIC,null, cv_item);
+
+                    //convert to id
+                    cv_price.put("item", String.valueOf(id_item));
+                    Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
+                    cv_price.put("market", id_market.toString());
+
+                    db_write.insert(db.DB_PRICES_PUBLIC,null, cv_price);
                     //show to add
                     Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
                     //and back to main layout
                     AddItem.super.onBackPressed();
+                }else{
+                    Toast.makeText(AddItem.this, "El producto "+ed_name.getText().toString()+" ya existe", Toast.LENGTH_SHORT).show();
                 }
             }
         });

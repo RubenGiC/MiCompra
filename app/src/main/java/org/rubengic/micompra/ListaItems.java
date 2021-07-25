@@ -35,6 +35,8 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
      */
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.name.setText(listItems.get(position).getName());
+        holder.price.setText("Precio: "+listItems.get(position).getPrice().toString());
+        holder.market.setText(listItems.get(position).getMarket());
     }
 
     @Override
@@ -50,6 +52,8 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
             // Define click listener for the ViewHolder's View
             // Define the texts Views
             name = (TextView) view.findViewById(R.id.t_name);
+            price = (TextView) view.findViewById(R.id.t2_price);
+            market = (TextView) view.findViewById(R.id.t_market);
         }
 
         public TextView getName() {
