@@ -44,6 +44,7 @@ public class AddItem extends AppCompatActivity {
     //for image
     private ImageView img_v;
     private Bitmap imageBitmap;
+    private String name_img;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
