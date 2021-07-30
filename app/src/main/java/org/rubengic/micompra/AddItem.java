@@ -44,7 +44,6 @@ public class AddItem extends AppCompatActivity {
     //for image
     private ImageView img_v;
     private Bitmap imageBitmap;
-    private String name_img;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -54,6 +53,8 @@ public class AddItem extends AppCompatActivity {
     private Spinner sp_market;
 
     private Toolbar my_toolbar;
+
+    private String name_image;
 
     DataBase db;
 
@@ -93,10 +94,12 @@ public class AddItem extends AppCompatActivity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        //the name of the image
+        name_image = ed_name.getText().toString().replace(' ','_')+"_"+timeStamp;
+        Toast.makeText(this, "-->"+name_image, Toast.LENGTH_SHORT).show();
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
+                name_image,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
@@ -150,9 +153,18 @@ public class AddItem extends AppCompatActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //take a picture
-                dispatchTakePictureIntent();
+                Toast.makeText(AddItem.this, "->"+ed_name.getText()+"<-", Toast.LENGTH_SHORT).show();
+                if(ed_name.getText().toString().isEmpty())
+                    Toast.makeText(AddItem.this, "Error primero el nombre del producto", Toast.LENGTH_SHORT).show();
+                else {
+                    //take a picture
+                    dispatchTakePictureIntent();
+                    try {
+                        createImageFile();
+                    }catch (Exception e){
+                        Toast.makeText(AddItem.this, "Error to create image: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
                 //options
                 //final CharSequence[] options = {"hacer foto", "Elegir foto de galeria", "Cancelar"};
                 //Dialog for choose options
@@ -186,36 +198,7 @@ public class AddItem extends AppCompatActivity {
         b_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //access and permission to write data base
-                DataBase db = new DataBase(AddItem.this);
-                SQLiteDatabase db_write = db.getWritableDatabase();
-                SQLiteDatabase db_read = db.getWritableDatabase();
-
-                Cursor exist = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+ed_name.getText().toString()+"')", null);
-
-                if(db_write != null && exist.getCount() == 0){
-                    //add values
-                    ContentValues cv_item = new ContentValues();
-                    ContentValues cv_price = new ContentValues();
-                    cv_item.put("name", ed_name.getText().toString());
-                    cv_price.put("price", ed_price.getText().toString());
-
-                    //insert in database
-                    long id_item = db_write.insert(db.DB_ITEMS_PUBLIC,null, cv_item);
-
-                    //convert to id
-                    cv_price.put("item", String.valueOf(id_item));
-                    Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
-                    cv_price.put("market", id_market.toString());
-
-                    db_write.insert(db.DB_PRICES_PUBLIC,null, cv_price);
-                    //show to add
-                    Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
-                    //and back to main layout
-                    AddItem.super.onBackPressed();
-                }else{
-                    Toast.makeText(AddItem.this, "El producto "+ed_name.getText().toString()+" ya existe", Toast.LENGTH_SHORT).show();
-                }
+                insertItem();
             }
         });
 
@@ -225,5 +208,43 @@ public class AddItem extends AppCompatActivity {
                 AddItem.super.onBackPressed();
             }
         });
+    }
+
+    public void insertItem(){
+        //access and permission to write data base
+        DataBase db = new DataBase(AddItem.this);
+        SQLiteDatabase db_write = db.getWritableDatabase();
+
+        Toast.makeText(this, "name: "+name_image, Toast.LENGTH_SHORT).show();
+
+        if(db_write != null && !db.existItem(ed_name.getText().toString())){
+            //always add image
+            if(img_v.getDrawable() != null && imageBitmap != null) {
+                //insert in database
+                long id_item = db.insertItem(ed_name.getText().toString(), new ModelImage(name_image, imageBitmap));
+
+                //if insert item is correct
+                if (id_item != -1) {
+                    //extrect the id of market
+                    Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
+
+                    //if insert price is correct
+                    if (db.insertPrice(String.valueOf(id_item), id_market.toString(), ed_price.getText().toString()) != -1) {
+                        //show to add
+                        Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
+                        //and back to main layout
+                        AddItem.super.onBackPressed();
+                    } else {
+                        Toast.makeText(AddItem.this, "Error al insertar el precio del producto " + ed_price + "€", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AddItem.this, "Error al insertar el producto " + ed_name.getText(), Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "Error necesita añadir una foto", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(AddItem.this, "El producto "+ed_name.getText().toString()+" ya existe", Toast.LENGTH_SHORT).show();
+        }
     }
 }

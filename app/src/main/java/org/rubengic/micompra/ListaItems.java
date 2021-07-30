@@ -1,8 +1,11 @@
 package org.rubengic.micompra;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +40,8 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         holder.name.setText(listItems.get(position).getName());
         holder.price.setText("Precio: "+listItems.get(position).getPrice().toString());
         holder.market.setText(listItems.get(position).getMarket());
+        if(listItems.get(position).getImage() != null)
+            holder.imagen.setImageBitmap(BitmapFactory.decodeByteArray(listItems.get(position).getImage(), 0, listItems.get(position).getImage().length));
     }
 
     @Override
@@ -46,6 +51,7 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, price, market;
+        ImageView imagen;
 
         public ViewHolder(View view) {
             super(view);
@@ -54,6 +60,7 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
             name = (TextView) view.findViewById(R.id.t_name);
             price = (TextView) view.findViewById(R.id.t2_price);
             market = (TextView) view.findViewById(R.id.t_market);
+            imagen = (ImageView) view.findViewById(R.id.iv_image);
         }
 
         public TextView getName() {

@@ -91,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor cursor = db_read.rawQuery("SELECT * FROM "+db.DB_PRICES_PUBLIC, null);
 
-        Toast.makeText(this, "prices --> "+cursor.getCount(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "prices --> "+cursor.getCount(), Toast.LENGTH_SHORT).show();
 
         String name_item = "", market = "";
+        byte [] image = new byte[0];
 
         //go to all data of the table
         while(cursor.moveToNext()){
@@ -103,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
             Cursor cursor_item = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC+" WHERE _id = "+cursor.getInt(1), null);
             while(cursor_item.moveToNext()) {
                 name_item = cursor_item.getString(1);
+                image = cursor_item.getBlob(3);
                 /*Toast.makeText(this, "1 --> " + cursor_item.getCount(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(this, "2 --> " + cursor_item.getInt(cursor_item.getColumnIndex("_id")), Toast.LENGTH_SHORT).show();*/
             }
-            Toast.makeText(this, "2 --> "+name_item, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "2 --> "+name_item, Toast.LENGTH_SHORT).show();
             //Toast.makeText(this, "--> "+cursor_item.getString(1), Toast.LENGTH_SHORT).show();
             Cursor cursor_market = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC+" WHERE _id = "+cursor.getInt(2), null);
 
@@ -114,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 market = cursor_market.getString(1);
             }
 
-            Toast.makeText(this, "2 --> "+market, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "2 --> "+market, Toast.LENGTH_SHORT).show();
 
-            item = new Items(cursor.getInt(0), name_item, cursor.getDouble(3), market);
+            item = new Items(cursor.getInt(0), name_item, cursor.getDouble(3), market, image);
 
             //and add to the list
             listItems.add(item);

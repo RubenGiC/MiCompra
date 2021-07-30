@@ -8,12 +8,14 @@ public class Items implements Serializable {
     private String name;
     private Double price;
     private String market;
+    private byte[] image;
 
-    public Items(Integer id, String name, Double price, String market){
+    public Items(Integer id, String name, Double price, String market, byte[] image){
         this.id = id;
         this.name = name;
         this.price = price;
         this.market = market;
+        this.image = image;
     }
 
     public Items(){}
@@ -26,6 +28,7 @@ public class Items implements Serializable {
     public void setPrice(double price){ this.price = price;}
     public String getMarket(){ return market; }
     public void setMarket(String market) { this.market = market; }
+    public byte[] getImage(){ return image; }
 
 
 

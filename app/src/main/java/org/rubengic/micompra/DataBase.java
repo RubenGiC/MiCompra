@@ -1,22 +1,32 @@
 package org.rubengic.micompra;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 public class DataBase extends SQLiteOpenHelper {
     //CREATE THE DB
     private static final String MIMARKET_CREATE_TABLE = "CREATE TABLE mimarket (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
-    private static final String MIITEMS_CREATE_TABLE = "CREATE TABLE miitem (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, image BLOB)";
+    private static final String MIITEMS_CREATE_TABLE = "CREATE TABLE miitem (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, image_name TEXT, image BLOB)";
     private static final String MIPRICES_CREATE_TABLE = "CREATE TABLE miprice (_id INTEGER PRIMARY KEY AUTOINCREMENT, item INTEGER, market INTEGER, price DOUBLE)";
     //name the file
     private static final String BD_NAME = "mimarket.sqlite";
     //number of version
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
+
+    //necessary to save image
+    private ByteArrayOutputStream ob_byte_array_os;
+    private byte[] imageInBytes;
 
     Context context;
 
@@ -27,6 +37,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public DataBase(Context context) {
         super(context, BD_NAME, null, VERSION);
+        this.context = context;
     }
 
     @Override
@@ -49,17 +60,108 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*db.execSQL("DROP TABLE IF EXISTS " + DB_ITEMS_PUBLIC);
+        db.execSQL("DROP TABLE IF EXISTS " + DB_ITEMS_PUBLIC);
         db.execSQL("DROP TABLE IF EXISTS " + DB_MARKETS_PUBLIC);
         db.execSQL("DROP TABLE IF EXISTS " + DB_PRICES_PUBLIC);
-        onCreate(db);*/
+        onCreate(db);
     }
 
     public void storeImage(ModelImage m_image){
         try{
-            SQLiteDatabase db = this.getWritableDatabase();
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+            //create image bitmap
+            Bitmap imageToStoreBitmap=m_image.getBitmap_img();
+
+            ob_byte_array_os = new ByteArrayOutputStream();
+            //and compress in format JPEG
+            imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG,100,ob_byte_array_os);
+
+            //transform the image content in bytes
+            imageInBytes = ob_byte_array_os.toByteArray();
+            //and create the content to save in database
+            ContentValues cv_item = new ContentValues();
+
+            cv_item.put("image_name", m_image.getName_img());
+            cv_item.put("image", imageInBytes);
+
+            long id_item = db_write.insert(DB_ITEMS_PUBLIC,null, cv_item);
+
         }catch (Exception e){
             Toast.makeText(context, "Error IMAGE STORE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public long insertItem(String name, ModelImage m_image){
+
+        try{
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+
+            //create image bitmap
+            Bitmap imageToStoreBitmap=m_image.getBitmap_img();
+
+            ob_byte_array_os = new ByteArrayOutputStream();
+            //and compress in format JPEG
+            imageToStoreBitmap.compress(Bitmap.CompressFormat.JPEG,100,ob_byte_array_os);
+
+            //transform the image content in bytes
+            imageInBytes = ob_byte_array_os.toByteArray();
+
+            //and create the content to save in database
+            ContentValues cv_item = new ContentValues();
+
+            cv_item.put("name", name);
+            System.out.println("--------------------> "+m_image.getName_img());
+            //cv_item.put("image_name", m_image.getName_img());
+            cv_item.put("image", imageInBytes);
+
+            long id_item = db_write.insert(DB_ITEMS_PUBLIC,null, cv_item);
+
+            return id_item;
+
+        }catch (Exception e){
+            Toast.makeText(context, "Error IMAGE STORE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        return -1;
+    }
+
+    public long insertPrice(String item, String market, String price){
+
+        try{
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+
+            //and create the content to save in database
+            ContentValues cv_price = new ContentValues();
+
+
+            cv_price.put("item", item);
+            cv_price.put("market", market);
+            cv_price.put("price", price);
+
+            long id_price = db_write.insert(DB_PRICES_PUBLIC,null, cv_price);
+
+            return id_price;
+
+        }catch (Exception e){
+            Toast.makeText(context, "Error IMAGE STORE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        return -1;
+    }
+
+    public boolean existItem(String name){
+        try{
+            SQLiteDatabase db_read = getWritableDatabase();
+
+            Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
+            if(exist.getCount() == 0)
+                return false;
+        }catch (Exception e){
+            Toast.makeText(context, "Error EXIST ITEM: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return true;
     }
 }
