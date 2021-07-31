@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,8 +22,8 @@ import org.rubengic.micompra.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-import android.widget.Toolbar;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.util.ArrayList;
 
@@ -33,10 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
-    private FloatingActionButton fab_add;
+    private FloatingActionButton fab_add, fab_add_item, fab_add_price, fab_add_market;
 
     private ArrayList<Items> listItems;
     private RecyclerView rv_listItems;
+
+    private boolean isFABOpen=false;
+
+    private Animation fromBottom, toBottom, rotateOpen, rotateClose;
 
     DataBase db;
 
@@ -70,17 +73,86 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         fab_add = (FloatingActionButton) findViewById(R.id.fab_add);
+        fab_add_item = (FloatingActionButton) findViewById(R.id.fab_add_item);
+        fab_add_price = (FloatingActionButton) findViewById(R.id.fab_add_price);
+        fab_add_market = (FloatingActionButton) findViewById(R.id.fab_add_market);
+
+        fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
+        toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
+        rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_animation);
+        rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_animation);
+
+        //closeFABMenu();
+
+        //show or hidden the options to add
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Añadiendo nuevo producto", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
+                showOrHiddeFABS();
+            }
+        });
+
+        fab_add_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 //add action add new item
                 Intent i= new Intent(getApplicationContext(), AddItem.class);
                 startActivity(i);
             }
         });
     }
+
+    //activate the animation of the float buttons
+    private void showOrHiddeFABS() {
+        setVisibility();
+        setAnimation();
+        isFABOpen=!isFABOpen;
+    }
+
+    //active or deactivate visibility
+    private void setVisibility() {
+        if(!isFABOpen){
+            fab_add_item.setVisibility(View.VISIBLE);
+            fab_add_price.setVisibility(View.VISIBLE);
+            fab_add_market.setVisibility(View.VISIBLE);
+        }else{
+            fab_add_item.setVisibility(View.INVISIBLE);
+            fab_add_price.setVisibility(View.INVISIBLE);
+            fab_add_market.setVisibility(View.INVISIBLE);
+        }
+    }
+    //show one or another animation
+    private void setAnimation() {
+        if(!isFABOpen){
+
+            fab_add_item.startAnimation(fromBottom);
+            fab_add_price.startAnimation(fromBottom);
+            fab_add_market.startAnimation(fromBottom);
+
+            fab_add.startAnimation(rotateOpen);
+        }else{
+            fab_add_item.startAnimation(toBottom);
+            fab_add_price.startAnimation(toBottom);
+            fab_add_market.startAnimation(toBottom);
+            fab_add.startAnimation(rotateClose);
+        }
+    }
+
+    //open the options to add
+    /*private void showFABOpen(){
+        isFABOpen=true;
+        fab_add_item.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
+        fab_add_price.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
+        fab_add_market.animate().translationY(-getResources().getDimension(R.dimen.standard_155));
+    }
+
+    //close the options to add
+    private void closeFABMenu(){
+        isFABOpen=false;
+        fab_add_item.animate().translationY(0);
+        fab_add_price.animate().translationY(0);
+        fab_add_market.animate().translationY(0);
+    }*/
 
     //method that queries the data from the database
     private void SelectListItems(){

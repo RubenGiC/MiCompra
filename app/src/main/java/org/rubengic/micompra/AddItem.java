@@ -96,7 +96,7 @@ public class AddItem extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         //the name of the image
         name_image = ed_name.getText().toString().replace(' ','_')+"_"+timeStamp;
-        Toast.makeText(this, "-->"+name_image, Toast.LENGTH_SHORT).show();
+
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 name_image,  /* prefix */
@@ -124,8 +124,8 @@ public class AddItem extends AppCompatActivity {
         //getSupportActionBar().setTitle("Añadir Producto");
 
         ed_name = (EditText) findViewById(R.id.t_name_item);
-        ed_price = (EditText) findViewById(R.id.t_price);
-        sp_market = (Spinner) findViewById(R.id.sp_market);
+        //ed_price = (EditText) findViewById(R.id.t_price);
+        //sp_market = (Spinner) findViewById(R.id.sp_market);
 
         ArrayList <String> list_markets = new ArrayList<>();
 
@@ -139,10 +139,10 @@ public class AddItem extends AppCompatActivity {
             list_markets.add(cursor.getString(1));
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list_markets);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_market.setAdapter(adapter);
+        sp_market.setAdapter(adapter);*/
 
         //charge the imagen view and button
         img_v = (ImageView) findViewById(R.id.i_image);
@@ -153,7 +153,7 @@ public class AddItem extends AppCompatActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AddItem.this, "->"+ed_name.getText()+"<-", Toast.LENGTH_SHORT).show();
+
                 if(ed_name.getText().toString().isEmpty())
                     Toast.makeText(AddItem.this, "Error primero el nombre del producto", Toast.LENGTH_SHORT).show();
                 else {
@@ -215,8 +215,6 @@ public class AddItem extends AppCompatActivity {
         DataBase db = new DataBase(AddItem.this);
         SQLiteDatabase db_write = db.getWritableDatabase();
 
-        Toast.makeText(this, "name: "+name_image, Toast.LENGTH_SHORT).show();
-
         if(db_write != null && !db.existItem(ed_name.getText().toString())){
             //always add image
             if(img_v.getDrawable() != null && imageBitmap != null) {
@@ -225,18 +223,21 @@ public class AddItem extends AppCompatActivity {
 
                 //if insert item is correct
                 if (id_item != -1) {
-                    //extrect the id of market
+
+                    //show to add
+                    Toast.makeText(AddItem.this, "Producto Añadido", Toast.LENGTH_SHORT).show();
+                    //and back to main layout
+                    AddItem.super.onBackPressed();
+
+                    /*//extrect the id of market
                     Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
 
                     //if insert price is correct
                     if (db.insertPrice(String.valueOf(id_item), id_market.toString(), ed_price.getText().toString()) != -1) {
-                        //show to add
-                        Toast.makeText(AddItem.this, "Añadido Producto", Toast.LENGTH_SHORT).show();
-                        //and back to main layout
-                        AddItem.super.onBackPressed();
+
                     } else {
                         Toast.makeText(AddItem.this, "Error al insertar el precio del producto " + ed_price + "€", Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
                 } else {
                     Toast.makeText(AddItem.this, "Error al insertar el producto " + ed_name.getText(), Toast.LENGTH_SHORT).show();
                 }
