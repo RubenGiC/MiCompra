@@ -186,11 +186,8 @@ public class AddItem extends AppCompatActivity {
     }
 
     public void insertItem(){
-        //access and permission to write data base
-        DataBase db = new DataBase(AddItem.this);
-        SQLiteDatabase db_write = db.getWritableDatabase();
 
-        if(db_write != null && !db.existItem(ed_name.getText().toString())){
+        if(!db.existItem(ed_name.getText().toString())){
             //always add image
             if(img_v.getDrawable() != null && imageBitmap != null) {
                 //insert in database

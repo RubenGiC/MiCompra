@@ -175,7 +175,7 @@ public class DataBase extends SQLiteOpenHelper {
         return -1;
     }
 
-    public long insertPrice(double price, int id_market, int id_item){
+    public long insertPrice(String price, int id_market, int id_item){
 
         /*try{
             //access database write
@@ -196,6 +196,19 @@ public class DataBase extends SQLiteOpenHelper {
         }*/
 
         return -1;
+    }
+
+    public boolean existPrice(int item, int market){
+        try{
+            SQLiteDatabase db_read = getWritableDatabase();
+
+            Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_PRICES_PUBLIC+" WHERE item = "+item+" and market = "+market+")", null);
+            if(exist.getCount() == 0)
+                return false;
+        }catch (Exception e){
+            Toast.makeText(context, "Error EXIST PRICE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return true;
     }
 
     public boolean existItem(String name){
