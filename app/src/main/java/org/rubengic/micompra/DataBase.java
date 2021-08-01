@@ -112,7 +112,7 @@ public class DataBase extends SQLiteOpenHelper {
             ContentValues cv_item = new ContentValues();
 
             cv_item.put("name", name);
-            System.out.println("--------------------> "+m_image.getName_img());
+            //System.out.println("--------------------> "+m_image.getName_img());
             //cv_item.put("image_name", m_image.getName_img());
             cv_item.put("image", imageInBytes);
 
@@ -121,7 +121,7 @@ public class DataBase extends SQLiteOpenHelper {
             return id_item;
 
         }catch (Exception e){
-            Toast.makeText(context, "Error IMAGE STORE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error INSERT ITEM: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         return -1;
@@ -146,7 +146,30 @@ public class DataBase extends SQLiteOpenHelper {
             return id_price;
 
         }catch (Exception e){
-            Toast.makeText(context, "Error IMAGE STORE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error INSERT PRICE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        return -1;
+    }
+
+    public long insertMarket(String name){
+
+        try{
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+
+            //and create the content to save in database
+            ContentValues cv_market = new ContentValues();
+
+
+            cv_market.put("name", name);
+
+            long id_market = db_write.insert(DB_MARKETS_PUBLIC,null, cv_market);
+
+            return id_market;
+
+        }catch (Exception e){
+            Toast.makeText(context, "Error INSERT MARKET: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         return -1;
@@ -157,6 +180,19 @@ public class DataBase extends SQLiteOpenHelper {
             SQLiteDatabase db_read = getWritableDatabase();
 
             Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
+            if(exist.getCount() == 0)
+                return false;
+        }catch (Exception e){
+            Toast.makeText(context, "Error EXIST ITEM: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    public boolean existMarket(String name){
+        try{
+            SQLiteDatabase db_read = getWritableDatabase();
+
+            Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_MARKETS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
             if(exist.getCount() == 0)
                 return false;
         }catch (Exception e){

@@ -2,10 +2,7 @@ package org.rubengic.micompra;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,7 +52,7 @@ public class AddItem extends AppCompatActivity {
 
     private String name_image;
 
-    DataBase db;
+    private DataBase db;
 
     //take the picture
     private void dispatchTakePictureIntent() {
@@ -121,7 +117,7 @@ public class AddItem extends AppCompatActivity {
         //change toolbar by my personalizate
         my_toolbar = findViewById(R.id.custom_toolbar_add_item);
         setSupportActionBar(my_toolbar);
-        //getSupportActionBar().setTitle("Añadir Producto");
+        getSupportActionBar().setTitle("Añadir Producto");
 
         ed_name = (EditText) findViewById(R.id.t_name_item);
         //ed_price = (EditText) findViewById(R.id.t_price);
