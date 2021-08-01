@@ -45,8 +45,6 @@ public class AddItem extends AppCompatActivity {
 
     //for information
     private EditText ed_name;
-    private EditText ed_price;
-    private Spinner sp_market;
 
     private Toolbar my_toolbar;
 
@@ -120,25 +118,6 @@ public class AddItem extends AppCompatActivity {
         getSupportActionBar().setTitle("Añadir Producto");
 
         ed_name = (EditText) findViewById(R.id.t_name_item);
-        //ed_price = (EditText) findViewById(R.id.t_price);
-        //sp_market = (Spinner) findViewById(R.id.sp_market);
-
-        ArrayList <String> list_markets = new ArrayList<>();
-
-        //indicate using only read data
-        SQLiteDatabase db_read = db.getReadableDatabase();
-
-        Cursor cursor = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC, null);
-
-        //go to all data of the table
-        while(cursor.moveToNext()){
-            list_markets.add(cursor.getString(1));
-        }
-
-        /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, list_markets);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_market.setAdapter(adapter);*/
 
         //charge the imagen view and button
         img_v = (ImageView) findViewById(R.id.i_image);

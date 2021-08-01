@@ -108,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        fab_add_price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //add action add new item
+                Intent i= new Intent(getApplicationContext(), AddPrice.class);
+                startActivity(i);
+            }
+        });
     }
 
     //activate the animation of the float buttons

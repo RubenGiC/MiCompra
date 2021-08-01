@@ -175,6 +175,29 @@ public class DataBase extends SQLiteOpenHelper {
         return -1;
     }
 
+    public long insertPrice(double price, int id_market, int id_item){
+
+        /*try{
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+
+            //and create the content to save in database
+            ContentValues cv_market = new ContentValues();
+
+
+            cv_market.put("name", name);
+
+            long id_market = db_write.insert(DB_MARKETS_PUBLIC,null, cv_market);
+
+            return id_market;
+
+        }catch (Exception e){
+            Toast.makeText(context, "Error INSERT MARKET: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }*/
+
+        return -1;
+    }
+
     public boolean existItem(String name){
         try{
             SQLiteDatabase db_read = getWritableDatabase();
