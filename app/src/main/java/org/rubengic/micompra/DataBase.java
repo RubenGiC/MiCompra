@@ -6,12 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
-import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import org.rubengic.micompra.Models.ModelImage;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 public class DataBase extends SQLiteOpenHelper {
@@ -177,23 +175,25 @@ public class DataBase extends SQLiteOpenHelper {
 
     public long insertPrice(String price, int id_market, int id_item){
 
-        /*try{
+        try{
             //access database write
             SQLiteDatabase db_write = this.getWritableDatabase();
 
             //and create the content to save in database
-            ContentValues cv_market = new ContentValues();
+            ContentValues cv_price = new ContentValues();
 
 
-            cv_market.put("name", name);
+            cv_price.put("item", String.valueOf(id_item));
+            cv_price.put("market", String.valueOf(id_market));
+            cv_price.put("price", price);
 
-            long id_market = db_write.insert(DB_MARKETS_PUBLIC,null, cv_market);
+            long id_price = db_write.insert(DB_PRICES_PUBLIC,null, cv_price);
 
-            return id_market;
+            return id_price;
 
         }catch (Exception e){
-            Toast.makeText(context, "Error INSERT MARKET: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }*/
+            Toast.makeText(context, "Error INSERT PRICE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         return -1;
     }
@@ -202,7 +202,8 @@ public class DataBase extends SQLiteOpenHelper {
         try{
             SQLiteDatabase db_read = getWritableDatabase();
 
-            Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_PRICES_PUBLIC+" WHERE item = "+item+" and market = "+market+")", null);
+            Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_PRICES_PUBLIC+" WHERE item = "+item+" and market = "+market, null);
+
             if(exist.getCount() == 0)
                 return false;
         }catch (Exception e){

@@ -51,7 +51,7 @@ public class AddPrice extends AppCompatActivity {
 
         //go to all data of the table
         while(cursor.moveToNext()){
-            list_markets.add(cursor.getString(1));
+            list_markets.add(cursor.getString(1)+" - "+cursor.getInt(0));
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -77,13 +77,13 @@ public class AddPrice extends AppCompatActivity {
         b_add_price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertPrice(sp_item.getSelectedItemPosition(), sp_market.getSelectedItemPosition(), ed_price.getText().toString());
+                insertPrice(sp_item.getSelectedItemPosition()+1, sp_market.getSelectedItemPosition()+1, ed_price.getText().toString());
             }
         });
     }
 
     public void insertPrice(int item, int market, String price){
-
+        
         if(!db.existPrice(item, market)){
             //insert in database
             long id_price = db.insertPrice(price,market, item);
@@ -98,13 +98,7 @@ public class AddPrice extends AppCompatActivity {
 
                 /*//extrect the id of market
                 Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
-
-                //if insert price is correct
-                if (db.insertPrice(String.valueOf(id_item), id_market.toString(), ed_price.getText().toString()) != -1) {
-
-                } else {
-                    Toast.makeText(AddItem.this, "Error al insertar el precio del producto " + ed_price + "€", Toast.LENGTH_SHORT).show();
-                }*/
+                */
             } else {
                 Toast.makeText(this, "Error al insertar el precio del producto " + sp_item.getSelectedItem(), Toast.LENGTH_SHORT).show();
             }

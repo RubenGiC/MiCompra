@@ -1,8 +1,9 @@
-package org.rubengic.micompra;
+package org.rubengic.micompra.Models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Items implements Serializable {
+public class Items implements Comparable {
 
     private Integer id;
     private String name;
@@ -30,6 +31,14 @@ public class Items implements Serializable {
     public void setMarket(String market) { this.market = market; }
     public byte[] getImage(){ return image; }
 
+    //compare objects
+    @Override
+    public int compareTo(Object o) {
 
+        Items items = (Items) o;
 
+        if(items.getId() == id && items.getName().equals(name) && items.getPrice() == price && items.getMarket().equals(market))
+            return 0;
+        return 1;
+    }
 }

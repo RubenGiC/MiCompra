@@ -1,5 +1,6 @@
 package org.rubengic.micompra;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -18,12 +21,14 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.rubengic.micompra.Models.Items;
 import org.rubengic.micompra.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFABOpen=false;
 
     private Animation fromBottom, toBottom, rotateOpen, rotateClose;
+
+    private ListaItems adapter;
 
     DataBase db;
 
@@ -62,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         SelectListItems();
 
         //create the adapter
-        ListaItems adapter = new ListaItems(listItems);
+        adapter = new ListaItems(listItems);
         //and add the adapter to the recycler view
         rv_listItems.setAdapter(adapter);
 
@@ -154,24 +161,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //open the options to add
-    /*private void showFABOpen(){
-        isFABOpen=true;
-        fab_add_item.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
-        fab_add_price.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
-        fab_add_market.animate().translationY(-getResources().getDimension(R.dimen.standard_155));
-    }
-
-    //close the options to add
-    private void closeFABMenu(){
-        isFABOpen=false;
-        fab_add_item.animate().translationY(0);
-        fab_add_price.animate().translationY(0);
-        fab_add_market.animate().translationY(0);
-    }*/
-
     //method that queries the data from the database
     private void SelectListItems(){
+
+        if(!listItems.isEmpty())
+            listItems.clear();
+
         //indicate using only read data
         SQLiteDatabase db_read = db.getReadableDatabase();
 
@@ -240,5 +235,15 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelectListItems();
+        //create the adapter
+        adapter = new ListaItems(listItems);
+        //and add the adapter to the recycler view
+        rv_listItems.setAdapter(adapter);
     }
 }

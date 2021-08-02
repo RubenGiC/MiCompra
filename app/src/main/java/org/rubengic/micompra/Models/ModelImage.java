@@ -1,4 +1,4 @@
-package org.rubengic.micompra;
+package org.rubengic.micompra.Models;
 
 import android.graphics.Bitmap;
 
