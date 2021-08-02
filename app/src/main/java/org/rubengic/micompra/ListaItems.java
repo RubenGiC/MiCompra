@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.rubengic.micompra.Models.Items;
-import org.rubengic.micompra.Utils.MiDiffUtilCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,26 +51,6 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if(payloads.isEmpty())
-            super.onBindViewHolder(holder, position, payloads);
-        else{
-            Bundle bundle = (Bundle) payloads.get(0);
-
-            for(String key: bundle.keySet()){
-                if(key.equals("name"))
-                    holder.name.setText(bundle.getString(key));
-                if(key.equals("price"))
-                    holder.price.setText(String.valueOf(bundle.getDouble(key,0.0)));
-                if(key.equals("market"))
-                    holder.market.setText(bundle.getString(key));
-                if(key.equals("image"))
-                    holder.imagen.setImageBitmap(BitmapFactory.decodeByteArray(bundle.getByteArray(key), 0, bundle.getByteArray(key).length));
-            }
-        }
-    }
-
-    @Override
     public int getItemCount() {
         return listItems.size();
     }
@@ -94,12 +73,4 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
             return name;
         }
     }
-
-    public void updateItems(ArrayList<Items> newList){
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new MiDiffUtilCallBack(listItems,newList));
-        diffResult.dispatchUpdatesTo(this);
-        listItems.clear();
-        listItems.addAll(newList);
-    }
-
 }

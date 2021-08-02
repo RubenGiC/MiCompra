@@ -40,6 +40,7 @@ public class AddPrice extends AppCompatActivity {
         sp_market = (Spinner) findViewById(R.id.sp_market);
         sp_item = (Spinner) findViewById(R.id.sp_item);
 
+        //list of markets and items
         ArrayList<String> list_markets = new ArrayList<>();
         ArrayList<String> list_items = new ArrayList<>();
 
@@ -54,6 +55,7 @@ public class AddPrice extends AppCompatActivity {
             list_markets.add(cursor.getString(1)+" - "+cursor.getInt(0));
         }
 
+        //create adapter to spinner market
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list_markets);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -67,6 +69,7 @@ public class AddPrice extends AppCompatActivity {
             list_items.add(cursor.getString(1)+" - "+cursor.getInt(0));
         }
 
+        //same for items
         ArrayAdapter<String> adapter_items = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list_items);
         adapter_items.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -74,16 +77,25 @@ public class AddPrice extends AppCompatActivity {
 
         Button b_add_price = (Button) findViewById(R.id.b_add_price);
 
+        //button add price and back
         b_add_price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 insertPrice(sp_item.getSelectedItemPosition()+1, sp_market.getSelectedItemPosition()+1, ed_price.getText().toString());
             }
         });
+
+        //button back
+        my_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddPrice.super.onBackPressed();
+            }
+        });
     }
 
     public void insertPrice(int item, int market, String price){
-        
+
         if(!db.existPrice(item, market)){
             //insert in database
             long id_price = db.insertPrice(price,market, item);

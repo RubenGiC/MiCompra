@@ -202,8 +202,10 @@ public class DataBase extends SQLiteOpenHelper {
         try{
             SQLiteDatabase db_read = getWritableDatabase();
 
+            //search the item and market in the table miprices
             Cursor exist = db_read.rawQuery("SELECT * FROM "+DB_PRICES_PUBLIC+" WHERE item = "+item+" and market = "+market, null);
 
+            //if not foud return false else return true
             if(exist.getCount() == 0)
                 return false;
         }catch (Exception e){
