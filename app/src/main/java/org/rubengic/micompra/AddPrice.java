@@ -34,7 +34,7 @@ public class AddPrice extends AppCompatActivity {
         //change toolbar by my personalizate
         Toolbar my_toolbar = findViewById(R.id.custom_toolbar_add_item);
         setSupportActionBar(my_toolbar);
-        getSupportActionBar().setTitle("Añadir Producto");
+        getSupportActionBar().setTitle("Añadir Precio");
 
         ed_price = (EditText) findViewById(R.id.t_price);
         sp_market = (Spinner) findViewById(R.id.sp_market);
@@ -52,7 +52,7 @@ public class AddPrice extends AppCompatActivity {
 
         //go to all data of the table
         while(cursor.moveToNext()){
-            list_markets.add(cursor.getString(1)+" - "+cursor.getInt(0));
+            list_markets.add(cursor.getString(1));
         }
 
         //create adapter to spinner market
@@ -66,7 +66,7 @@ public class AddPrice extends AppCompatActivity {
 
         //go to all data of the table
         while(cursor.moveToNext()){
-            list_items.add(cursor.getString(1)+" - "+cursor.getInt(0));
+            list_items.add(cursor.getString(1));
         }
 
         //same for items

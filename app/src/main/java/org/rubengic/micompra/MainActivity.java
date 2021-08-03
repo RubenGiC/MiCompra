@@ -1,6 +1,9 @@
 package org.rubengic.micompra;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,19 +68,9 @@ public class MainActivity extends AppCompatActivity {
         //manage layout
         rv_listItems.setLayoutManager(new LinearLayoutManager(this));
 
-        //go to access to the database
-        SelectListItems();
-
-        //create the adapter
-        adapter = new ListaItems(listItems);
-        //and add the adapter to the recycler view
-        rv_listItems.setAdapter(adapter);
+        loadList();
 
         setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
         fab_add = (FloatingActionButton) findViewById(R.id.fab_add);
         fab_add_item = (FloatingActionButton) findViewById(R.id.fab_add_item);
@@ -89,7 +82,36 @@ public class MainActivity extends AppCompatActivity {
         rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_animation);
         rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_animation);
 
-        //closeFABMenu();
+        adapter.setOnItemListener(new ListaItems.OnItemListener() {
+            @Override
+            public void OnItemClickListener(View view, int position) {
+
+            }
+
+            @Override
+            public void OnItemLongClickListener(View view, int position) {
+
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+                ad.setTitle("Borrar precio");
+
+                ad.setMessage("¿Seguro que quieres borrar el precio "+adapter.getItem(position).getPrice()+"€, del producto "+adapter.getItem(position).getName()+", del supermercado "+adapter.getItem(position).getMarket()+"?");
+
+                ad.setNegativeButton("No", null);
+
+                ad.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.erasePrice(adapter.getItem(position).getId());
+                        Toast.makeText(MainActivity.this, "Precio eliminado", Toast.LENGTH_SHORT).show();
+                        loadList();
+                    }
+                });
+
+                AlertDialog dialog = ad.create();
+
+                dialog.show();
+            }
+        });
 
         //show or hidden the options to add
         fab_add.setOnClickListener(new View.OnClickListener() {
@@ -208,10 +230,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //action to the activiti to select item to erase
+    public void openDeleteItem(){
+        Intent i= new Intent(getApplicationContext(), EraseItem.class);
+        startActivity(i);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -223,23 +252,24 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                return true;
+            case R.id.erase_item:
+                openDeleteItem();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        loadList();
+    }
+
+    public void loadList(){
         SelectListItems();
         //create the adapter
         adapter = new ListaItems(listItems);

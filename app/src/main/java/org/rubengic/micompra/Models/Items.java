@@ -19,6 +19,11 @@ public class Items implements Comparable {
         this.image = image;
     }
 
+    public Items(Integer id, String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public Items(){}
 
     //gets and sets

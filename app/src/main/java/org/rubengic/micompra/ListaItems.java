@@ -1,21 +1,17 @@
 package org.rubengic.micompra;
 
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.rubengic.micompra.Models.Items;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class used from show the items with recycler view
@@ -23,6 +19,8 @@ import java.util.List;
 public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
 
     public ArrayList<Items> listItems;
+
+    private static OnItemListener onItemListener;
 
     public ListaItems(ArrayList<Items> listItems){//String[] dataSet
         this.listItems = listItems;
@@ -34,6 +32,10 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
      */
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View vi = LayoutInflater.from(parent.getContext()).inflate(R.layout.text_row_item, null, false);
+
+        vi.setOnClickListener(new RV_ItemListener());
+        vi.setOnLongClickListener(new RV_ItemListener());
+
         return new ViewHolder(vi);
     }
 
@@ -46,6 +48,7 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         holder.name.setText(listItems.get(position).getName());
         holder.price.setText("Precio: "+listItems.get(position).getPrice().toString());
         holder.market.setText(listItems.get(position).getMarket());
+        holder.itemView.setId(position);
         if(listItems.get(position).getImage() != null)
             holder.imagen.setImageBitmap(BitmapFactory.decodeByteArray(listItems.get(position).getImage(), 0, listItems.get(position).getImage().length));
     }
@@ -55,7 +58,11 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         return listItems.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public Items getItem(int position) {
+        return listItems.get(position);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView name, price, market;
         ImageView imagen;
 
@@ -72,5 +79,34 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         public TextView getName() {
             return name;
         }
+    }
+
+    //implement the interface callback method to transfer the click event to the external caller
+    public static class RV_ItemListener implements View.OnClickListener, View.OnLongClickListener{
+
+        @Override
+        public void onClick(View v) {
+            if(onItemListener != null)
+                onItemListener.OnItemClickListener(v, v.getId());
+
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if(onItemListener != null)
+                onItemListener.OnItemLongClickListener(v, v.getId());
+            return true;
+        }
+    }
+
+    //instantiate the exposed caller and define the Listener's method ()
+    public void setOnItemListener(OnItemListener listener){
+        this.onItemListener = listener;
+    }
+
+    //define listening interface class
+    public interface OnItemListener{
+        void OnItemClickListener(View view, int position);
+        void OnItemLongClickListener(View view, int position);
     }
 }

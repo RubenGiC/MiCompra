@@ -239,4 +239,39 @@ public class DataBase extends SQLiteOpenHelper {
         }
         return true;
     }
+
+    public int id_Item(String name){
+        SQLiteDatabase db_read = getWritableDatabase();
+
+        Cursor item = db_read.rawQuery("SELECT * FROM "+DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
+
+        if(item.getCount() != 0)
+            while(item.moveToNext()) {
+                Toast.makeText(context, "-->" + item.getInt(0), Toast.LENGTH_SHORT).show();
+                return item.getInt(0);
+            }
+
+        return -1;
+    }
+
+    public boolean erasePrice(long id){
+        //access database write
+        SQLiteDatabase db_write = this.getWritableDatabase();
+
+        db_write.execSQL("DELETE FROM "+DB_PRICES_PUBLIC+" WHERE _id="+id);
+
+        return false;
+    }
+
+    public boolean eraseItem(long id){
+
+        //access database write
+        SQLiteDatabase db_write = this.getWritableDatabase();
+        
+        db_write.execSQL("DELETE FROM "+DB_PRICES_PUBLIC+" WHERE item="+id);
+
+        db_write.execSQL("DELETE FROM "+DB_ITEMS_PUBLIC+" WHERE _id="+id);
+
+        return false;
+    }
 }

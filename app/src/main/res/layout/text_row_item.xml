@@ -5,12 +5,13 @@
     android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+    <ImageView
+        android:id="@+id/iv_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:paddingBottom="10dp"
+        app:srcCompat="@drawable/ic_baseline_image_not_found_24" />
 
     <LinearLayout
         android:layout_width="300dp"
@@ -35,5 +36,5 @@
             android:layout_height="wrap_content"
             android:text="TextView" />
     </LinearLayout>
-    </LinearLayout>
+</LinearLayout>
 
