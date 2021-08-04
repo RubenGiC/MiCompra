@@ -198,8 +198,7 @@ public class AddItem extends AppCompatActivity {
                     //show to add
                     Toast.makeText(AddItem.this, "Producto Añadido", Toast.LENGTH_SHORT).show();
                     //and back to main layout
-                    //AddItem.super.onBackPressed();
-                    setResult(Activity.RESULT_OK, new Intent().putExtra("returned_main", db.DB_PRICES_PUBLIC));
+                    AddItem.super.onBackPressed();
 
                     /*//extrect the id of market
                     Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);

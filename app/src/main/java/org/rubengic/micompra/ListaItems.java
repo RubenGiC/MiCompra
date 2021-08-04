@@ -46,7 +46,7 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.name.setText(listItems.get(position).getName());
-        holder.price.setText("Precio: "+listItems.get(position).getPrice().toString());
+        holder.price.setText("Precio: "+listItems.get(position).getPrice().toString()+" €");
         holder.market.setText(listItems.get(position).getMarket());
         holder.itemView.setId(position);
         if(listItems.get(position).getImage() != null)

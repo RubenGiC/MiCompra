@@ -10,13 +10,15 @@ public class Items implements Comparable {
     private Double price;
     private String market;
     private byte[] image;
+    private Integer id_item;
 
-    public Items(Integer id, String name, Double price, String market, byte[] image){
+    public Items(Integer id, String name, Double price, String market, byte[] image, Integer id_item){
         this.id = id;
         this.name = name;
         this.price = price;
         this.market = market;
         this.image = image;
+        this.id_item = id_item;
     }
 
     public Items(Integer id, String name){
@@ -28,6 +30,7 @@ public class Items implements Comparable {
 
     //gets and sets
     public Integer getId(){ return id; }
+    public Integer getIdItem(){ return id_item; }
     public String getName(){ return name; }
     public void setName(String name){ this.name = name; }
     public Double getPrice(){ return price; }

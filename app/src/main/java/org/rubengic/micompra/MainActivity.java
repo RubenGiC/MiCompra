@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListaItems adapter;
 
-    DataBase db;
+    private DataBase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemListener(new ListaItems.OnItemListener() {
             @Override
             public void OnItemClickListener(View view, int position) {
-                Toast.makeText(MainActivity.this, "hola --> "+position, Toast.LENGTH_SHORT).show();
+                Intent i= new Intent(getApplicationContext(), ItemInfo.class);
+                i.putExtra("id",adapter.getItem(position).getIdItem());
+                startActivity(i);
             }
 
             @Override
@@ -200,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
         String name_item = "", market = "";
         byte [] image = new byte[0];
+        Integer id_item=-1;
 
         //go to all data of the table
         while(cursor.moveToNext()){
@@ -210,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
             while(cursor_item.moveToNext()) {
                 name_item = cursor_item.getString(1);
                 image = cursor_item.getBlob(3);
+                id_item = cursor_item.getInt(0);
                 /*Toast.makeText(this, "1 --> " + cursor_item.getCount(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(this, "2 --> " + cursor_item.getInt(cursor_item.getColumnIndex("_id")), Toast.LENGTH_SHORT).show();*/
             }
@@ -223,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
             //Toast.makeText(this, "2 --> "+market, Toast.LENGTH_SHORT).show();
 
-            item = new Items(cursor.getInt(0), name_item, cursor.getDouble(3), market, image);
+            item = new Items(cursor.getInt(0), name_item, cursor.getDouble(3), market, image, id_item);
 
             //and add to the list
             listItems.add(item);
@@ -259,8 +263,6 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_settings:
-                Intent i= new Intent(getApplicationContext(), ItemInfo.class);
-                startActivity(i);
                 return true;
             case R.id.erase_item:
                 openDeleteItem();

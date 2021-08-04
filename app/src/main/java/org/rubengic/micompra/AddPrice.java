@@ -81,7 +81,8 @@ public class AddPrice extends AppCompatActivity {
         b_add_price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertPrice(sp_item.getSelectedItemPosition()+1, sp_market.getSelectedItemPosition()+1, ed_price.getText().toString());
+                //Toast.makeText(AddPrice.this, "-->"+adapter_items.getItem(sp_item.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
+                insertPrice(db.id_Item(adapter_items.getItem(sp_item.getSelectedItemPosition())), db.id_Market(adapter.getItem(sp_market.getSelectedItemPosition())), ed_price.getText().toString());
             }
         });
 
