@@ -241,36 +241,81 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public int id_Item(String name){
-        SQLiteDatabase db_read = getWritableDatabase();
+        try{
+            SQLiteDatabase db_read = getWritableDatabase();
 
-        Cursor item = db_read.rawQuery("SELECT * FROM "+DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
+            Cursor item = db_read.rawQuery("SELECT * FROM "+DB_ITEMS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
 
-        if(item.getCount() != 0)
-            while(item.moveToNext()) {
-                Toast.makeText(context, "-->" + item.getInt(0), Toast.LENGTH_SHORT).show();
-                return item.getInt(0);
-            }
+            if(item.getCount() != 0)
+                while(item.moveToNext()) {
+                    return item.getInt(0);
+                }
+        }catch (Exception e){
+            Toast.makeText(context, "Error RETURN ID ITEM: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return -1;
+    }
+
+    public int id_Market(String name){
+        try{
+            SQLiteDatabase db_read = getWritableDatabase();
+
+            Cursor market = db_read.rawQuery("SELECT * FROM "+DB_MARKETS_PUBLIC+" WHERE UPPER(name) = UPPER('"+name+"')", null);
+
+            if(market.getCount() != 0)
+                while(market.moveToNext()) {
+                    return market.getInt(0);
+                }
+        }catch (Exception e){
+            Toast.makeText(context, "Error RETURN ID MARKET: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         return -1;
     }
 
     public boolean erasePrice(long id){
-        //access database write
-        SQLiteDatabase db_write = this.getWritableDatabase();
+        try {
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
 
-        db_write.execSQL("DELETE FROM "+DB_PRICES_PUBLIC+" WHERE _id="+id);
+            db_write.execSQL("DELETE FROM " + DB_PRICES_PUBLIC + " WHERE _id=" + id);
+        }catch (Exception e){
+            Toast.makeText(context, "Error DELETE PRICE: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         return false;
     }
 
     public boolean eraseItem(long id){
 
-        //access database write
-        SQLiteDatabase db_write = this.getWritableDatabase();
-        
-        db_write.execSQL("DELETE FROM "+DB_PRICES_PUBLIC+" WHERE item="+id);
+        try {
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
 
-        db_write.execSQL("DELETE FROM "+DB_ITEMS_PUBLIC+" WHERE _id="+id);
+            db_write.execSQL("DELETE FROM " + DB_PRICES_PUBLIC + " WHERE item=" + id);
+
+            db_write.execSQL("DELETE FROM " + DB_ITEMS_PUBLIC + " WHERE _id=" + id);
+            return true;
+        }catch (Exception e){
+            Toast.makeText(context, "Error DELETE ITEM: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
+    }
+
+    public boolean eraseMarket(long id){
+
+        try{
+            //access database write
+            SQLiteDatabase db_write = this.getWritableDatabase();
+
+            db_write.execSQL("DELETE FROM "+DB_PRICES_PUBLIC+" WHERE market="+id);
+
+            db_write.execSQL("DELETE FROM "+DB_MARKETS_PUBLIC+" WHERE _id="+id);
+            return true;
+        }catch (Exception e){
+            Toast.makeText(context, "Error DELETE MARKET: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         return false;
     }

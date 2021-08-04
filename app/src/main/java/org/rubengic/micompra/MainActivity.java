@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemListener(new ListaItems.OnItemListener() {
             @Override
             public void OnItemClickListener(View view, int position) {
-
+                Toast.makeText(MainActivity.this, "hola --> "+position, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -235,6 +235,11 @@ public class MainActivity extends AppCompatActivity {
         Intent i= new Intent(getApplicationContext(), EraseItem.class);
         startActivity(i);
     }
+    //action to the activiti to select market to erase
+    public void openDeleteMarket(){
+        Intent i= new Intent(getApplicationContext(), EraseMarket.class);
+        startActivity(i);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -254,9 +259,14 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_settings:
+                Intent i= new Intent(getApplicationContext(), ItemInfo.class);
+                startActivity(i);
                 return true;
             case R.id.erase_item:
                 openDeleteItem();
+                return true;
+            case R.id.erase_market:
+                openDeleteMarket();
                 return true;
         }
 

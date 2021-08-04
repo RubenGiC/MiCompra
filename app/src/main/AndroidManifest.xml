@@ -17,6 +17,8 @@
         <activity android:name=".AddMarket" />
         <activity android:name=".AddPrice"/>
         <activity android:name=".EraseItem"/>
+        <activity android:name=".EraseMarket"/>
+        <activity android:name=".ItemInfo"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

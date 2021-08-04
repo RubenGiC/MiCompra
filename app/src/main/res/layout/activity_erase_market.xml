@@ -8,10 +8,10 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".EraseItem">
+        tools:context=".EraseMarket">
 
         <include layout="@layout/custom_toolbar"
-            android:id="@+id/custom_toolbar_del_item"/>
+            android:id="@+id/custom_toolbar_del_market"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,17 +25,17 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Atención no solo borrara el producto sino tambien los precios que tenga ese producto de todos los supermercados" />
+                android:text="Atención no solo borrara el supermercado sino tambien los precios que tenga ese supermercado de todos los productos" />
 
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
-                android:text="Producto" />
+                android:text="Supermercado" />
 
             <Spinner
-                android:id="@+id/sp_item"
+                android:id="@+id/sp_market"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="15dp"
@@ -43,12 +43,12 @@
                 android:paddingBottom="15dp" />
 
             <Button
-                android:id="@+id/b_del_item"
+                android:id="@+id/b_del_market"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:foregroundGravity="center_horizontal"
-                android:text="Borrar Producto" />
+                android:text="Borrar Supermercado" />
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
