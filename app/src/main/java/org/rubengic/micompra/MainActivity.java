@@ -206,10 +206,13 @@ public class MainActivity extends AppCompatActivity {
         //go to all data of the table
         while(cursor_items.moveToNext()){
 
-            //access the lowest price of this item
-            Cursor cursor_prices = db_read.rawQuery("SELECT DISTINCT item, MIN(price), market, _id FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
+            //count the number of prices of this item
+            Cursor cursor_prices_count = db_read.rawQuery("SELECT * FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0), null);
 
-            if(cursor_prices.getCount()>0) {
+            if(cursor_prices_count.getCount()>0) {
+                //access the lowest price of this item
+                Cursor cursor_prices = db_read.rawQuery("SELECT DISTINCT item, MIN(price), market, _id FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
+                Toast.makeText(this, "AFTER "+cursor_prices.getCount(), Toast.LENGTH_SHORT).show();
                 //add the name, image and id of item
                 name_item = cursor_items.getString(1);
                 image = cursor_items.getBlob(3);
@@ -226,12 +229,13 @@ public class MainActivity extends AppCompatActivity {
                         market = cursor_market.getString(1);
 
                 }
-            }
-            //create the object item
-            item = new Items(id_price, name_item, price_value, market, image, id_item);
+                //create the object item
+                item = new Items(id_price, name_item, price_value, market, image, id_item);
 
-            //and add to the list
-            listItems.add(item);
+                //and add to the list
+                listItems.add(item);
+            }
+
         }
     }
 
