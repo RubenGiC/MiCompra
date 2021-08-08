@@ -4,9 +4,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,6 +75,12 @@ public class ItemInfo extends AppCompatActivity {
 
         loadList(id_item);
 
+        my_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemInfo.super.onBackPressed();
+            }
+        });
     }
 
     //method that queries the data from the database
@@ -90,38 +96,22 @@ public class ItemInfo extends AppCompatActivity {
 
         Cursor cursor = db_read.rawQuery("SELECT * FROM "+db.DB_PRICES_PUBLIC+" WHERE item="+id_item, null);
 
-        Toast.makeText(this, "prices --> "+cursor.getCount(), Toast.LENGTH_SHORT).show();
-
-        /*String name_item = "", market = "";
-        byte [] image = new byte[0];
+        String market = "", value = "";
 
         //go to all data of the table
         while(cursor.moveToNext()){
 
-            //create item
-            //item = new Items(cursor.getInt(0), cursor.getString(1), cursor.getDouble(2), cursor.getString(3));
-            Cursor cursor_item = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC+" WHERE _id = "+cursor.getInt(1), null);
-            while(cursor_item.moveToNext()) {
-                name_item = cursor_item.getString(1);
-                image = cursor_item.getBlob(3);*/
-                /*Toast.makeText(this, "1 --> " + cursor_item.getCount(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(this, "2 --> " + cursor_item.getInt(cursor_item.getColumnIndex("_id")), Toast.LENGTH_SHORT).show();*/
-           /* }
-            //Toast.makeText(this, "2 --> "+name_item, Toast.LENGTH_SHORT).show();
-            //Toast.makeText(this, "--> "+cursor_item.getString(1), Toast.LENGTH_SHORT).show();
             Cursor cursor_market = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC+" WHERE _id = "+cursor.getInt(2), null);
 
             while(cursor_market.moveToNext()) {
                 market = cursor_market.getString(1);
             }
 
-            //Toast.makeText(this, "2 --> "+market, Toast.LENGTH_SHORT).show();
-
-            item = new Items(cursor.getInt(0), name_item, cursor.getDouble(3), market, image);
+            price = new Prices(cursor.getInt(0), id_item, cursor.getDouble(3), market);
 
             //and add to the list
-            listItems.add(item);
-        }*/
+            listPrices.add(price);
+        }
     }
 
     public void loadList(int id){

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,8 +60,8 @@ public class ListPrices extends RecyclerView.Adapter<ListPrices.ViewHolder> {
             super(view);
             // Define click listener for the ViewHolder's View
             // Define the texts Views
-            price = (TextView) view.findViewById(R.id.t2_price);
-            market = (TextView) view.findViewById(R.id.t_market);
+            price = (TextView) view.findViewById(R.id.tv_price);
+            market = (TextView) view.findViewById(R.id.tv_market);
         }
 
         public TextView getMarket() {
