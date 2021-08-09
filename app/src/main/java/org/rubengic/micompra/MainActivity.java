@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             if(cursor_prices_count.getCount()>0) {
                 //access the lowest price of this item
                 Cursor cursor_prices = db_read.rawQuery("SELECT DISTINCT item, MIN(price), market, _id FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
-                Toast.makeText(this, "AFTER "+cursor_prices.getCount(), Toast.LENGTH_SHORT).show();
+                
                 //add the name, image and id of item
                 name_item = cursor_items.getString(1);
                 image = cursor_items.getBlob(3);
