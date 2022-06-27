@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -33,6 +34,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             if(cursor_prices_count.getCount()>0) {
                 //access the lowest price of this item
                 Cursor cursor_prices = db_read.rawQuery("SELECT DISTINCT item, MIN(price), market, _id FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
-                
+
                 //add the name, image and id of item
                 name_item = cursor_items.getString(1);
                 image = cursor_items.getBlob(3);
@@ -275,9 +277,32 @@ public class MainActivity extends AppCompatActivity {
             case R.id.erase_market:
                 openDeleteMarket();
                 return true;
+            case R.id.shopping_list:
+                Toast.makeText(this, "Muestra la lista completa", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.copy_sql:
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static boolean copyFile(String from, String to){
+        boolean result = false;
+        try{
+            File dir = new File(to.substring(0,to.lastIndexOf('/')));
+            dir.mkdir();
+            File tof = new File(dir, to.substring(to.lastIndexOf('/')+1));
+            int byteread;
+            File oldfile = new File(from);
+            /* TERMINAR COPIA BASE DE DATOS
+            https://es.stackoverflow.com/questions/333989/como-hacer-una-copia-de-una-base-de-datos-sqlite-y-compartirla
+            https://es.stackoverflow.com/questions/79010/como-copiar-una-base-de-datos-sqlite-o-archivo-desde-el-almacenamiento-interno
+             */
+        }catch(Exception e){
+            Log.e("copyFile","Error copiando el archivo: "+e.getMessage());
+        }
+        return result;
     }
 
     @Override

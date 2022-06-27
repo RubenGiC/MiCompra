@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.rubengic.micompra.MainActivity">
     <item
+        android:id="@+id/shopping_list"
+        android:title="Shopping List"
+        android:icon="@drawable/ic_euro"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="1"
         android:title="@string/action_settings"
@@ -15,4 +20,12 @@
         android:id="@+id/erase_market"
         android:orderInCategory="3"
         android:title="Eliminar Supermercado" />
+    <item
+        android:id="@+id/copy_sql"
+        android:orderInCategory="4"
+        android:title="Copia BD" />
+    <item
+        android:id="@+id/rest_sql"
+        android:orderInCategory="4"
+        android:title="Restauración BD" />
 </menu>

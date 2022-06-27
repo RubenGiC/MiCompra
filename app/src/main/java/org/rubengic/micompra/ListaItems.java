@@ -22,9 +22,9 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
 
     private static OnItemListener onItemListener;
 
-    public ListaItems(ArrayList<Items> listItems){//String[] dataSet
-        this.listItems = listItems;
-    }
+        public ListaItems(ArrayList<Items> listItems){//String[] dataSet
+            this.listItems = listItems;
+        }
 
     @Override
     /**

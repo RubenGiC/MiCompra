@@ -82,7 +82,11 @@ public class AddPrice extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(AddPrice.this, "-->"+adapter_items.getItem(sp_item.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
-                insertPrice(db.id_Item(adapter_items.getItem(sp_item.getSelectedItemPosition())), db.id_Market(adapter.getItem(sp_market.getSelectedItemPosition())), ed_price.getText().toString());
+                if(sp_item.getSelectedItem() == null) {
+                    Toast.makeText(AddPrice.this, "Error debe seleccionar un producto.", Toast.LENGTH_SHORT).show();
+                }else{
+                    insertPrice(db.id_Item(adapter_items.getItem(sp_item.getSelectedItemPosition())), db.id_Market(adapter.getItem(sp_market.getSelectedItemPosition())), ed_price.getText().toString());
+                }
             }
         });
 
@@ -96,24 +100,34 @@ public class AddPrice extends AppCompatActivity {
     }
 
     public void insertPrice(int item, int market, String price){
-
+        //Toast.makeText(this, String.valueOf(item), Toast.LENGTH_SHORT).show();
         if(!db.existPrice(item, market)){
-            //insert in database
-            long id_price = db.insertPrice(price,market, item);
+            try {
+                if (price.length() == 0) {
+                    Toast.makeText(AddPrice.this, "Error necesita un precio.", Toast.LENGTH_SHORT).show();
+                } else if (Float.parseFloat(price) <= 0.0) {
+                    Toast.makeText(AddPrice.this, "Error el precio tiene que ser > 0.0.", Toast.LENGTH_SHORT).show();
+                } else {
+                    //insert in database
+                    long id_price = db.insertPrice(price, market, item);
 
-            //if insert price is correct
-            if (id_price != -1) {
+                    //if insert price is correct
+                    if (id_price != -1) {
 
-                //show to add
-                Toast.makeText(this, "Precio Añadido", Toast.LENGTH_SHORT).show();
-                //and back to main layout
-                super.onBackPressed();
+                        //show to add
+                        Toast.makeText(this, "Precio Añadido", Toast.LENGTH_SHORT).show();
+                        //and back to main layout
+                        super.onBackPressed();
 
-                /*//extrect the id of market
-                Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
-                */
-            } else {
-                Toast.makeText(this, "Error al insertar el precio del producto " + sp_item.getSelectedItem(), Toast.LENGTH_SHORT).show();
+                        /*//extrect the id of market
+                        Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
+                        */
+                    } else {
+                        Toast.makeText(this, "Error al insertar el precio del producto " + sp_item.getSelectedItem(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }catch (NumberFormatException e){
+                Toast.makeText(this, "Error precio no valido.", Toast.LENGTH_SHORT).show();
             }
         }else{
             Toast.makeText(this, "El producto "+sp_item.getSelectedItem()+" ya tiene un precio", Toast.LENGTH_SHORT).show();
