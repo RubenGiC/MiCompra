@@ -18,7 +18,7 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String MIITEMS_CREATE_TABLE = "CREATE TABLE miitem (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, image_name TEXT, image BLOB)";
     private static final String MIPRICES_CREATE_TABLE = "CREATE TABLE miprice (_id INTEGER PRIMARY KEY AUTOINCREMENT, item INTEGER, market INTEGER, price DOUBLE)";
     //name the file
-    private static final String BD_NAME = "mimarket.sqlite";
+    protected static final String BD_NAME = "mimarket.sqlite";
     //number of version
     private static final int VERSION = 2;
 

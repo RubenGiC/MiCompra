@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,9 +33,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -149,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
     }
 
     //activate the animation of the float buttons
@@ -281,6 +287,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Muestra la lista completa", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.copy_sql:
+                String path_db = getDatabasePath(db.BD_NAME).toString();//Error in read database dont find it
+                //copy the local data base in storage
+                copyFile(path_db,getApplicationContext().getExternalFilesDir(null).getPath()+"Android/data"+getPackageName()+"db_mimarket.sqlite");
+                Toast.makeText(this, "Copia creada", Toast.LENGTH_SHORT).show();
+                return true;
 
         }
 
@@ -290,11 +301,27 @@ public class MainActivity extends AppCompatActivity {
     public static boolean copyFile(String from, String to){
         boolean result = false;
         try{
+            //obtengo el directorio a crear
             File dir = new File(to.substring(0,to.lastIndexOf('/')));
             dir.mkdir();
+            //y el archivo a crear
             File tof = new File(dir, to.substring(to.lastIndexOf('/')+1));
             int byteread;
+            //compruebo si existe ya el archivo
             File oldfile = new File(from);
+            if(oldfile.exists()){
+                //creamos los flujos de lectura y escritura
+                InputStream inStream = new FileInputStream(from);
+                FileOutputStream fs = new FileOutputStream(tof);
+                byte[] buffer = new byte[1024];
+                //recorremos el contenido
+                while((byteread = inStream.read(buffer)) != -1){
+                    fs.write(buffer, 0, byteread);
+                }
+                inStream.close();//cerramos el flujo de lectura
+                fs.close();//cerramos el flujo de escritura
+            }
+            result = true;
             /* TERMINAR COPIA BASE DE DATOS
             https://es.stackoverflow.com/questions/333989/como-hacer-una-copia-de-una-base-de-datos-sqlite-y-compartirla
             https://es.stackoverflow.com/questions/79010/como-copiar-una-base-de-datos-sqlite-o-archivo-desde-el-almacenamiento-interno
