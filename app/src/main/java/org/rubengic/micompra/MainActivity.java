@@ -2,6 +2,7 @@ package org.rubengic.micompra;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -252,6 +253,10 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //for copy and restore data base
+        String path_db = getDatabasePath(DataBase.BD_NAME).toString();//Error in read database dont find it
+        String path_cop = getApplicationContext().getExternalFilesDir(null).getPath()+"db/"+DataBase.BD_NAME;
+
         //noinspection SimplifiableIfStatement
         switch (id){
             case R.id.action_settings:
@@ -265,14 +270,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.shopping_list:
                 Toast.makeText(this, "Muestra la lista completa", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.copy_sql:
-                String path_db = getDatabasePath(DataBase.BD_NAME).toString();//Error in read database dont find it
+            case R.id.copy_sql://backup sqlite
                 //copy the local data base in storage
-                if(copyFile(path_db,getApplicationContext().getExternalFilesDir(null).getPath()+"Android/data"+getPackageName()+"db_mimarket.sqlite")) {
+                if(copyFile(path_db,path_cop)) {
                     Toast.makeText(this, "Copia creada", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "Error al intentar hacer la copia", Toast.LENGTH_SHORT).show();
                 }
                 return true;
-
+            case R.id.rest_sql://restore sqlite
+                //copy the backup and restore local data base
+                if(copyFile(path_cop,path_db)) {
+                    Toast.makeText(this, "Restaurada con exito", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "Error al intentar hacer la restauración", Toast.LENGTH_SHORT).show();
+                }
+                //download the list
+                loadList();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -286,8 +301,9 @@ public class MainActivity extends AppCompatActivity {
             dir.mkdir();
             //y el archivo a crear
             File tof = new File(dir, to.substring(to.lastIndexOf('/')+1));
+
             int byteread;
-            //compruebo si existe ya el archivo
+            //compruebo si existe el archivo a copiar
             File oldfile = new File(from);
             if(oldfile.exists()){
                 //creamos los flujos de lectura y escritura
