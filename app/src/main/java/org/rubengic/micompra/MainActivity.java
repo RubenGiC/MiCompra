@@ -1,9 +1,7 @@
 package org.rubengic.micompra;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,18 +9,11 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Environment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
@@ -43,9 +33,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
 
     private FloatingActionButton fab_add, fab_add_item, fab_add_price, fab_add_market;
 
@@ -64,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         //create database, the list of items and the recycler view
         db = new DataBase(getApplicationContext());
         listItems = new ArrayList<>();
-        rv_listItems = (RecyclerView) findViewById(R.id.rv_list_items);
+        rv_listItems = findViewById(R.id.rv_list_items);
 
         //manage layout
         rv_listItems.setLayoutManager(new LinearLayoutManager(this));
@@ -79,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        fab_add = (FloatingActionButton) findViewById(R.id.fab_add);
-        fab_add_item = (FloatingActionButton) findViewById(R.id.fab_add_item);
-        fab_add_price = (FloatingActionButton) findViewById(R.id.fab_add_price);
-        fab_add_market = (FloatingActionButton) findViewById(R.id.fab_add_market);
+        fab_add = findViewById(R.id.fab_add);
+        fab_add_item = findViewById(R.id.fab_add_item);
+        fab_add_price = findViewById(R.id.fab_add_price);
+        fab_add_market = findViewById(R.id.fab_add_market);
 
         fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
         toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
@@ -107,13 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
                 ad.setNegativeButton("No", null);
 
-                ad.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        db.erasePrice(adapter.getItem(position).getId());
-                        Toast.makeText(MainActivity.this, "Precio eliminado", Toast.LENGTH_SHORT).show();
-                        loadList();
-                    }
+                ad.setPositiveButton("Si", (dialog, which) -> {
+                    db.erasePrice(adapter.getItem(position).getId());
+                    Toast.makeText(MainActivity.this, "Precio eliminado", Toast.LENGTH_SHORT).show();
+                    loadList();
                 });
 
                 AlertDialog dialog = ad.create();
@@ -123,36 +107,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //show or hidden the options to add
-        fab_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOrHiddeFABS();
-            }
-        });
+        fab_add.setOnClickListener(variable -> showOrHiddeFABS());
 
-        fab_add_item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //add action add new item
-                Intent i= new Intent(getApplicationContext(), AddItem.class);
-                startActivity(i);
-            }
+        fab_add_item.setOnClickListener(v -> {
+            //add action add new item
+            Intent i= new Intent(getApplicationContext(), AddItem.class);
+            startActivity(i);
         });
-        fab_add_market.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //add action add new item
-                Intent i= new Intent(getApplicationContext(), AddMarket.class);
-                startActivity(i);
-            }
+        fab_add_market.setOnClickListener(v -> {
+            //add action add new item
+            Intent i= new Intent(getApplicationContext(), AddMarket.class);
+            startActivity(i);
         });
-        fab_add_price.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        fab_add_price.setOnClickListener(v -> {
                 //add action add new item
                 Intent i= new Intent(getApplicationContext(), AddPrice.class);
                 startActivity(i);
-            }
         });
 
     }
@@ -202,12 +172,12 @@ public class MainActivity extends AppCompatActivity {
         //indicate using only read data
         SQLiteDatabase db_read = db.getReadableDatabase();
 
-        Items item = null;
+        Items item;
 
-        String name_item = "", market = "";
-        byte [] image = new byte[0];
-        Double price_value = 0.0;
-        Integer id_item=-1, id_price = -1;
+        String name_item, market = "";
+        byte [] image;
+        double price_value = 0.0;
+        int id_item, id_price = -1;
 
         Cursor cursor_items = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC, null);
 
@@ -236,13 +206,21 @@ public class MainActivity extends AppCompatActivity {
                     while(cursor_market.moveToNext())
                         market = cursor_market.getString(1);
 
+                    //close cursor_market
+                    cursor_market.close();
                 }
                 //create the object item
                 item = new Items(id_price, name_item, price_value, market, image, id_item);
 
                 //and add to the list
                 listItems.add(item);
+
+                //close cursors
+                cursor_prices.close();
             }
+            //close cursors
+            cursor_items.close();
+            cursor_prices_count.close();
 
         }
     }
@@ -266,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -287,10 +266,11 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Muestra la lista completa", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.copy_sql:
-                String path_db = getDatabasePath(db.BD_NAME).toString();//Error in read database dont find it
+                String path_db = getDatabasePath(DataBase.BD_NAME).toString();//Error in read database dont find it
                 //copy the local data base in storage
-                copyFile(path_db,getApplicationContext().getExternalFilesDir(null).getPath()+"Android/data"+getPackageName()+"db_mimarket.sqlite");
-                Toast.makeText(this, "Copia creada", Toast.LENGTH_SHORT).show();
+                if(copyFile(path_db,getApplicationContext().getExternalFilesDir(null).getPath()+"Android/data"+getPackageName()+"db_mimarket.sqlite")) {
+                    Toast.makeText(this, "Copia creada", Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
         }
