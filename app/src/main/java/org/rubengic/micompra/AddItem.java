@@ -2,21 +2,21 @@ package org.rubengic.micompra;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import org.rubengic.micompra.Models.ModelImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,16 +25,23 @@ import java.util.Date;
 
 public class AddItem extends AppCompatActivity {
 
+    /**
+     * ARREGLAR LO DE LAS FOTOS
+     * https://www.youtube.com/watch?v=j4C8PQ_rT9Y
+     */
+
+    /*
     //directory app
     private String APP_DIRECTORY = "ImagesMiCompra";
     //directory media
     private String MEDIA_DIRECTORY = APP_DIRECTORY + "media";
     //directory where the image save temporality
     private String TEMPORAL_PICTURE_NAME = "temp.jpg";
+     */
 
     //code image (code respond)
-    private final int PHOTO_CODE = 100;
-    private final int SELECT_PICTURE = 200;
+    //private final int PHOTO_CODE = 100;
+    //private final int SELECT_PICTURE = 200;
 
     //for image
     private ImageView img_v;
@@ -47,27 +54,43 @@ public class AddItem extends AppCompatActivity {
 
     private Toolbar my_toolbar;
 
-    private String name_image;
+    private String name_image="";
 
     private DataBase db;
 
     //take the picture
     private void dispatchTakePictureIntent() {
-        File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), MEDIA_DIRECTORY);
+        //File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), MEDIA_DIRECTORY);
         //create directories
-        file.mkdirs();
+        //file.mkdirs();
         //create the path
-        String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
+        //String path = getExternalFilesDir(Environment.DIRECTORY_PICTURES) + File.separator + MEDIA_DIRECTORY + File.separator + TEMPORAL_PICTURE_NAME;
 
-        File newfile = new File(path);
+        File newfile = null; //new File(path);
 
-        //create intent
+        //create intstorageDirent
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         //if isn't null the take picture
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            //capture and save image
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
+
+            try {
+                newfile = createImageFile();//Debo de cambiarlo pero ya en el futuro
+            }catch (IOException e){
+                Log.e("ERROR", e.getMessage());
+            }
+
+            if(newfile != null){
+                Uri uri_img = FileProvider.getUriForFile(this, "org.rubengic.micompra.fileprovider", newfile);
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri_img);
+
+                //capture and save image
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+
+
+            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newfile));
         }
     }
 
@@ -76,8 +99,9 @@ public class AddItem extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //create image and show
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
+            //Bundle extras = data.getExtras();
+            //imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);// muestra la imagen que esta almacenada
             img_v.setImageBitmap(imageBitmap);
         }
     }
@@ -90,6 +114,8 @@ public class AddItem extends AppCompatActivity {
         //the name of the image
         name_image = ed_name.getText().toString().replace(' ','_')+"_"+timeStamp;
 
+        Toast.makeText(this, name_image, Toast.LENGTH_SHORT).show();
+
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 name_image,  /* prefix */
@@ -99,9 +125,9 @@ public class AddItem extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
+        Toast.makeText(this, currentPhotoPath, Toast.LENGTH_SHORT).show();
         return image;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,11 +146,11 @@ public class AddItem extends AppCompatActivity {
 
         //charge the imagen view and button
         img_v = (ImageView) findViewById(R.id.i_image);
-        Button b = (Button) findViewById(R.id.b_add_image);
+        Button b_img = (Button) findViewById(R.id.b_add_image);
         Button b_add = (Button) findViewById(R.id.b_add_item);
 
         //action click of the button
-        b.setOnClickListener(new View.OnClickListener() {
+        b_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -133,11 +159,7 @@ public class AddItem extends AppCompatActivity {
                 else {
                     //take a picture
                     dispatchTakePictureIntent();
-                    try {
-                        createImageFile();
-                    }catch (Exception e){
-                        Toast.makeText(AddItem.this, "Error to create image: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+
                 }
                 //options
                 //final CharSequence[] options = {"hacer foto", "Elegir foto de galeria", "Cancelar"};
@@ -158,7 +180,6 @@ public class AddItem extends AppCompatActivity {
                             intento.setType("image/*");
                             //choose the app to select the picture
                             startActivityForResult(intento.createChooser(intento, "Selecciona la app de imagenes"), SELECT_PICTURE);
-
                         }else{
                             dialog.dismiss();
                         }
@@ -172,6 +193,14 @@ public class AddItem extends AppCompatActivity {
         b_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /*try {
+                    createImageFile();
+
+                }catch (Exception e){
+                    Toast.makeText(AddItem.this, "Error to create image: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }*/
+
                 insertItem();
             }
         });
@@ -189,8 +218,10 @@ public class AddItem extends AppCompatActivity {
         if(!db.existItem(ed_name.getText().toString())){
             //always add image
             if(img_v.getDrawable() != null && imageBitmap != null) {
+
+                //Toast.makeText(this, name_image, Toast.LENGTH_SHORT).show();
                 //insert in database
-                long id_item = db.insertItem(ed_name.getText().toString(), new ModelImage(name_image, imageBitmap));
+                long id_item = db.insertItem(ed_name.getText().toString(), currentPhotoPath);
 
                 //if insert item is correct
                 if (id_item != -1) {
@@ -200,15 +231,6 @@ public class AddItem extends AppCompatActivity {
                     //and back to main layout
                     AddItem.super.onBackPressed();
 
-                    /*//extrect the id of market
-                    Integer id_market = Math.toIntExact(sp_market.getSelectedItemId() + 1);
-
-                    //if insert price is correct
-                    if (db.insertPrice(String.valueOf(id_item), id_market.toString(), ed_price.getText().toString()) != -1) {
-
-                    } else {
-                        Toast.makeText(AddItem.this, "Error al insertar el precio del producto " + ed_price + "€", Toast.LENGTH_SHORT).show();
-                    }*/
                 } else {
                     Toast.makeText(AddItem.this, "Error al insertar el producto " + ed_name.getText(), Toast.LENGTH_SHORT).show();
                 }

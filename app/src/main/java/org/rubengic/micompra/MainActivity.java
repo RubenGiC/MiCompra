@@ -2,7 +2,7 @@ package org.rubengic.micompra;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -175,26 +175,56 @@ public class MainActivity extends AppCompatActivity {
 
         Items item;
 
-        String name_item, market = "";
-        byte [] image;
+        String name_item = "";
+        String market = "";
+        String path_image = "";
         double price_value = 0.0;
-        int id_item, id_price = -1;
+        int id_item = -1;
+        int id_price = -1;
 
         Cursor cursor_items = db_read.rawQuery("SELECT * FROM "+db.DB_ITEMS_PUBLIC, null);
 
+        //Toast.makeText(this,String.valueOf(cursor_items.getCount()), Toast.LENGTH_SHORT).show();
+
         //go to all data of the table
         while(cursor_items.moveToNext()){
+            //Toast.makeText(this,String.valueOf(cursor_items.getString(1)), Toast.LENGTH_SHORT).show();
 
             //count the number of prices of this item
             Cursor cursor_prices_count = db_read.rawQuery("SELECT * FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0), null);
 
             if(cursor_prices_count.getCount()>0) {
+
+                //Toast.makeText(this,String.valueOf(cursor_prices_count.getCount()), Toast.LENGTH_SHORT).show();
+
                 //access the lowest price of this item
                 Cursor cursor_prices = db_read.rawQuery("SELECT DISTINCT item, MIN(price), market, _id FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
+                //Cursor cursor_prices = db_read.rawQuery("SELECT * FROM "+db.DB_PRICES_PUBLIC+" WHERE item = "+cursor_items.getInt(0)+" ORDER BY price ASC", null);
+                int count = 0;
+                while(cursor_prices.moveToNext() && count == 0) {
+                    //Toast.makeText(this, String.valueOf(cursor_prices.getDouble(3)) + " €", Toast.LENGTH_SHORT).show();
 
+                    //add the name, image and id of item
+                    name_item = cursor_items.getString(1);
+                    path_image = cursor_items.getString(2);
+                    id_item = cursor_items.getInt(0);
+
+                    id_price = cursor_prices.getInt(3);
+                    price_value = cursor_prices.getDouble(1);
+
+                    //Toast.makeText(this, "id_price: "+String.valueOf(id_price)+", precio: "+String.valueOf(price_value)+" €", Toast.LENGTH_SHORT).show();
+
+                    Cursor cursor_market = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC+" WHERE _id = "+cursor_prices.getInt(2), null);
+
+                    while(cursor_market.moveToNext())
+                        market = cursor_market.getString(1);
+
+                    //count ++;
+                }
+/*
                 //add the name, image and id of item
                 name_item = cursor_items.getString(1);
-                image = cursor_items.getBlob(3);
+                path_image = cursor_items.getString(2);
                 id_item = cursor_items.getInt(0);
 
                 while (cursor_prices.moveToNext()) {
@@ -202,27 +232,29 @@ public class MainActivity extends AppCompatActivity {
                     id_price = cursor_prices.getInt(3);
                     price_value = cursor_prices.getDouble(1);
 
+                    //Toast.makeText(this, "id_price: "+String.valueOf(id_price)+", precio: "+String.valueOf(price_value)+" €", Toast.LENGTH_SHORT).show();
+
                     Cursor cursor_market = db_read.rawQuery("SELECT * FROM "+db.DB_MARKETS_PUBLIC+" WHERE _id = "+cursor_prices.getInt(2), null);
 
                     while(cursor_market.moveToNext())
                         market = cursor_market.getString(1);
 
                     //close cursor_market
-                    cursor_market.close();
+                    //cursor_market.close();
                 }
+*/
                 //create the object item
-                item = new Items(id_price, name_item, price_value, market, image, id_item);
+                item = new Items(id_price, name_item, price_value, market, path_image, id_item);
 
                 //and add to the list
                 listItems.add(item);
 
                 //close cursors
-                cursor_prices.close();
+                //cursor_prices.close();
             }
             //close cursors
-            cursor_items.close();
-            cursor_prices_count.close();
-
+            //cursor_items.close();
+            //cursor_prices_count.close();
         }
     }
 

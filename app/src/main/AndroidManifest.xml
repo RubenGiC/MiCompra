@@ -3,8 +3,15 @@
     package="org.rubengic.micompra">
 
     <!-- permisos -->
-    <uses-feature android:name="android.hardware.camera" android:required="true" /><!-- camera -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /><!-- storage -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" /> <!-- camera -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" /> <!-- storage -->
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        android:maxSdkVersion="28"/>
 
     <application
         android:allowBackup="true"
@@ -12,13 +19,28 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"><!--android:theme="@style/Theme.MiCompra" -->
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <!-- Para almacenar la imagen en la galeria -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.rubengic.micompra.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+        <!--<meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/file_paths" />-->
+        <!-- android:theme="@style/Theme.MiCompra" -->
         <activity android:name=".AddItem" />
         <activity android:name=".AddMarket" />
-        <activity android:name=".AddPrice"/>
-        <activity android:name=".EraseItem"/>
-        <activity android:name=".EraseMarket"/>
-        <activity android:name=".ItemInfo"/>
+        <activity android:name=".AddPrice" />
+        <activity android:name=".EraseItem" />
+        <activity android:name=".EraseMarket" />
+        <activity android:name=".ItemInfo" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -29,16 +51,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--<provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
-        </provider>-->
 
     </application>
 

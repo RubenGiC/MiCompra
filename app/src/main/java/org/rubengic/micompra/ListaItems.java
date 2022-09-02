@@ -1,5 +1,6 @@
 package org.rubengic.micompra;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +50,9 @@ public class ListaItems extends RecyclerView.Adapter<ListaItems.ViewHolder> {
         holder.price.setText("Precio: "+listItems.get(position).getPrice().toString()+" €");
         holder.market.setText(listItems.get(position).getMarket());
         holder.itemView.setId(position);
-        if(listItems.get(position).getImage() != null)
-            holder.imagen.setImageBitmap(BitmapFactory.decodeByteArray(listItems.get(position).getImage(), 0, listItems.get(position).getImage().length));
+
+        Bitmap imageBitmap = BitmapFactory.decodeFile(listItems.get(position).getPathImage());// muestra la imagen que esta almacenada
+        holder.imagen.setImageBitmap(imageBitmap);
     }
 
     @Override

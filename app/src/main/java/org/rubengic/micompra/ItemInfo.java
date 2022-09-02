@@ -2,6 +2,7 @@ package org.rubengic.micompra;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
@@ -50,7 +51,7 @@ public class ItemInfo extends AppCompatActivity {
 
         //go to all data of the table
         while(cursor.moveToNext()){
-            item = new Items(cursor.getInt(0),cursor.getString(1),0.0,null,cursor.getBlob(3),cursor.getInt(0));
+            item = new Items(cursor.getInt(0),cursor.getString(1),0.0,null,cursor.getString(2),cursor.getInt(0));
         }
 
         //change toolbar by my personalizate
@@ -63,8 +64,12 @@ public class ItemInfo extends AppCompatActivity {
 
         tv_name.setText(item.getName());
 
-        if(item.getImage() != null)
-            img_v.setImageBitmap(BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length));
+        Bitmap bm_img = BitmapFactory.decodeFile(item.getPathImage());
+
+        img_v.setImageBitmap(bm_img);
+
+        /*if(item.getPathImage() != null)
+            img_v.setImageBitmap(BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length));*/
 
         //create the list of items and the recycler view
         listPrices = new ArrayList<>();
